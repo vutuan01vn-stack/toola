@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ Số Chữ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col justify-between font-sans">
+    <div class="max-w-2xl mx-auto p-6 w-full mt-10 bg-white rounded-2xl shadow-xl">
+        <h1 class="text-2xl font-bold text-center text-slate-800 mb-6">Công cụ Số Chữ</h1>
+        
+        <div class="mb-4">
+            <label class="block text-slate-700 font-medium mb-2">Nhập số cần đọc:</label>
+            <input type="number" id="inputNumber" placeholder="Ví dụ: 1500000" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-lg">
+        </div>
+
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <h2 class="text-sm font-semibold text-blue-600 uppercase mb-1">Kết quả bằng chữ:</h2>
+            <p id="resultText" class="text-xl font-bold text-slate-800 min-h-[32px]">-</p>
+        </div>
+    </div>
+
+    <footer class="text-center py-6 text-slate-500 text-sm">
+        Copyright by Vutuan01vn
+    </footer>
+
+    <script>
+        function docSoThanhChu(so) {
+            if (so === 0 || isNaN(so)) return "Không đồng";
+            const chuSo = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
+            const donViLon = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
+
+            function docBlock(s, isFull) {
+                let tram = parseInt(s[0]), chuc = parseInt(s[1]), donVi = parseInt(s[2]);
+                let ketQua = "";
+                if (tram !== 0 || isFull) {
+                    ketQua += chuSo[tram] + " trăm ";
+                    if (chuc === 0 && donVi !== 0) ket_qua += "lẻ ";
+                }
+                if (chuc > 1) {
+                    ketQua += chuSo[chuc] + " mươi ";
+                    if (donVi === 1) ketQua += "mốt ";
+                    else if (donVi === 5) ketQua += "lăm ";
+                    else if (donVi !== 0) ketQua += chuSo[donVi] + " ";
+                } else if (chuc === 1) {
+                    ketQua += "mười ";
+                    if (donVi === 1) ketQua += "một ";
+                    else if (donVi === 5) ketQua += "lăm ";
+                    else if (donVi !== 0) ketQua += chuSo[donVi] + " ";
+                } else if (chuc === 0 && donVi !== 0 && tram !== 0) {
+                    ketQua += (donVi === 5 ? "lăm " : chuSo[donVi] + " ");
+                } else if (chuc === 0 && donVi !== 0 && tram === 0) {
+                    ketQua += chuSo[donVi] + " ";
+                }
+                return ketQua.trim();
+            }
+
+            let s = String(so);
+            let du = s.length % 3;
+            if (du !== 0) s = "0".repeat(3 - du) + s;
+
+            let blocks = [];
+            for (let i = 0; i < s.length; i += 3) blocks.push(s.substr(i, 3));
+            
+            let soBlock = blocks.length, ketQuaArr = [];
+            for (let i = 0; i < blocks.length; i++) {
+                let viTri = soBlock - i - 1;
+                if (blocks[i] === "000") continue;
+                let docB = docBlock(blocks[i], i > 0);
+                if (docB) {
+                    ketQuaArr.push(docB);
+                    if (viTri > 0) ketQuaArr.push(donViLon[viTri]);
+                }
+            }
+            let finalStr = ketQuaArr.join(" ");
+            return finalStr.charAt(0).toUpperCase() + finalStr.slice(1) + " đồng";
+        }
+
+        document.getElementById('inputNumber').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            document.getElementById('resultText').innerText = isNaN(val) ? "Vui lòng nhập số hợp lệ" : docSoThanhChu(val);
+        });
+    </script>
+</body>
+</html>
